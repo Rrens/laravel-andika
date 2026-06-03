@@ -36,3 +36,29 @@ Route::post('buat-login', function(){
     return back();
 })->name('buat-login');
 
+Route::get('/update/{id}', function($id) {
+    $data = User::find($id);
+    // dd($data);
+    return view('update', compact('data'));
+})->name('update');
+
+Route::post('buat-update', function(){
+    $id = request('id');
+    $user = User::find($id);
+    // dd($user, request()->all());
+
+    $user->update([
+        'name' => request('nama-panjang'),
+        'email' => request('email'),
+        'password' => request('password'),
+    ]);
+
+    return redirect('/login');
+})->name('buat-update');
+
+Route::get('/delete/{id}', function($id) {
+    $user = User::find($id);
+    $user->delete();
+
+    return back();
+})->name('delete');

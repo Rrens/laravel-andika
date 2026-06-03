@@ -50,19 +50,20 @@
 <body class="text-center">
 
     <main class="form-signin">
-        <form action="{{ route('buat-login') }}" method="POST">
+        <form action="{{ route('buat-update') }}" method="POST">
             @csrf
             <img class="mb-4" src="/docs/5.0/assets/brand/bootstrap-logo.svg" alt="" width="72"
                 height="57">
-            <h1 class="h3 mb-3 fw-normal">Create</h1>
-
+            <h1 class="h3 mb-3 fw-normal">Update</h1>
+            <input type="text" name="id" value="{{ $data->id }}" hidden>
             <div class="form-floating">
-                <input type="text" class="form-control" id="floatingInput" placeholder="Name" name="nama-panjang">
+                <input type="text" class="form-control" id="floatingInput" placeholder="Name" name="nama-panjang"
+                    value="{{ $data->name }}">
                 <label for="floatingInput">Name</label>
             </div>
             <div class="form-floating">
                 <input type="email" class="form-control" id="floatingInput" placeholder="name@example.com"
-                    name="email">
+                    name="email" value="{{ $data->email }}">
                 <label for="floatingInput">Email address</label>
             </div>
             <div class="form-floating">
@@ -75,29 +76,6 @@
             <p class="mt-5 mb-3 text-muted">&copy; 2017–2021</p>
         </form>
     </main>
-
-    <table class="table">
-        <thead>
-            <tr>
-                <th scope="col">ID</th>
-                <th scope="col">Name</th>
-                <th scope="col">Email</th>
-            </tr>
-        </thead>
-        @foreach ($data as $i)
-            <tr>
-                <th scope="row">{{ $i->id }}</th>
-                <td>{{ $i->name }}</td>
-                <td>{{ $i->email }}</td>
-                <td>
-                    <a href="{{ route('update', ['id' => $i->id]) }}" class="btn btn-sm btn-primary">Update</a>
-
-                    <a href="{{ route('delete', ['id' => $i->id]) }}" class="btn btn-sm btn-danger">Delete</a>
-                </td>
-            </tr>
-        @endforeach
-        </tbody>
-    </table>
 </body>
 
 </html>
