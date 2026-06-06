@@ -2,6 +2,7 @@
 
 use App\Models\User;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\UserController;
 
 /*
 |--------------------------------------------------------------------------
@@ -18,11 +19,13 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/login', function() {
-    $data = User::all();
+// Route::get('/login', function() {
+//     $data = User::all();
 
-    return view('login', compact('data'));
-});
+//     return view('add', compact('data'));
+// });
+
+Route::get('add-user', [UserController::class, 'index'])->name('add-user');
 
 Route::post('buat-login', function(){
     // dd(request()->all());
