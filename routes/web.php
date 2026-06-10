@@ -1,67 +1,44 @@
 <?php
 
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\CartController;
 use App\Models\User;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\LoginController;
 use App\Http\Controllers\UserController;
-
-/*
-|--------------------------------------------------------------------------
-| Web Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider and all of them will
-| be assigned to the "web" middleware group. Make something great!
-|
-*/
+use App\Http\Controllers\ProductController;
 
 Route::get('/', function () {
     return view('welcome');
 });
 
-// Route::get('/login', function() {
-//     $data = User::all();
 
-//     return view('add', compact('data'));
-// });
+Route::group([
+    'prefix' => 'auth'
+    ], function() {
+    Route::get('login', [AuthController::class, 'login'])->name('login');
+    Route::post('login', [AuthController::class, 'authenticate'])->name('authenticate');
+    Route::get('/register', [AuthController::class, 'register'])->name('register');
+    Route::post('/register', [AuthController::class, 'store'])->name('buat-login');
+});
 
-Route::get('add-user', [UserController::class, 'index'])->name('add-user');
+Route::post('auth/logout', [AuthController::class, 'logout'])->name('logout')->middleware('auth');
 
-Route::post('buat-login', function(){
-    // dd(request()->all());
+Route::group([
+    'middleware' => ['loguser', 'role:user,admin']
+], function() {
+    Route::get('add-user', [UserController::class, 'index'])->name('add-user');
+    Route::get('update/{id}', [UserController::class, 'update'])->name('update');
+    Route::post('update', [UserController::class, 'post_update'])->name('buat-update');
 
-    User::create([
-        'name' => request('nama-panjang'),
-        'email' => request('email'),
-        'password' => request('password'),
-    ]);
+    Route::get('delete/{id}', [UserController::class, 'delete'])->name('delete');
 
-    return back();
-})->name('buat-login');
+    Route::get('product', [ProductController::class, 'index'])->name('product');
 
-Route::get('/update/{id}', function($id) {
-    $data = User::find($id);
-    // dd($data);
-    return view('update', compact('data'));
-})->name('update');
+    Route::group([
+        'prefix' => 'cart'
+    ], function(){
+        Route::post('', [CartController::class, 'store'])->name('cart-store');
+    });
+});
 
-Route::post('buat-update', function(){
-    $id = request('id');
-    $user = User::find($id);
-    // dd($user, request()->all());
-
-    $user->update([
-        'name' => request('nama-panjang'),
-        'email' => request('email'),
-        'password' => request('password'),
-    ]);
-
-    return redirect('/login');
-})->name('buat-update');
-
-Route::get('/delete/{id}', function($id) {
-    $user = User::find($id);
-    $user->delete();
-
-    return back();
-})->name('delete');

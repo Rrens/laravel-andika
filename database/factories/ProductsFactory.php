@@ -4,6 +4,7 @@ namespace Database\Factories;
 
 use App\Models\Products;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Support\Arr;
 
 /**
  * @extends Factory<Products>
@@ -17,11 +18,13 @@ class ProductsFactory extends Factory
      */
     public function definition(): array
     {
+        $productNames = ['Laptop', 'Smartphone', 'Headphones', 'Camera', 'Smartwatch'];
+
         return [
-            'store_id' => 1,
-            'name' => fake()->word(),
-            'description' => fake()->sentence(),
+            'name' => Arr::random($productNames),
             'price' => 10000,
+            'is_sold' => 0,
+            'discount' => null,
             'created_at' => now(),
             'updated_at' => now(),
         ];

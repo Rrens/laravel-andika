@@ -11,7 +11,9 @@
     <!-- Google Fonts: Inter & JetBrains Mono -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap"
+        rel="stylesheet">
 
     <!-- CSS Reset and Minimalist Professional Styling -->
     <style>
@@ -441,6 +443,7 @@
 </head>
 
 <body>
+    @include('sweetalert::alert')
     <div class="container">
         <!-- Header -->
         <header>
@@ -497,7 +500,8 @@
                                     <circle cx="12" cy="7" r="4" />
                                 </svg>
                             </span>
-                            <input type="text" class="form-input" id="name" placeholder="John Doe" name="nama-panjang" required>
+                            <input type="text" class="form-input" id="name" placeholder="John Doe"
+                                name="nama-panjang" required>
                         </div>
                     </div>
 
@@ -506,11 +510,13 @@
                         <div class="input-wrapper">
                             <span class="input-icon">
                                 <svg viewBox="0 0 24 24">
-                                    <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
+                                    <path
+                                        d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
                                     <polyline points="22,6 12,13 2,6" />
                                 </svg>
                             </span>
-                            <input type="email" class="form-input" id="email" placeholder="john@example.com" name="email" required>
+                            <input type="email" class="form-input" id="email" placeholder="john@example.com"
+                                name="email" required>
                         </div>
                     </div>
 
@@ -523,12 +529,14 @@
                                     <path d="M7 11V7a5 5 0 0 1 10 0v4" />
                                 </svg>
                             </span>
-                            <input type="password" class="form-input" id="password" placeholder="••••••••" name="password" required>
+                            <input type="password" class="form-input" id="password" placeholder="••••••••"
+                                name="password" required>
                         </div>
                     </div>
 
                     <button class="btn-submit" type="submit" id="submit-btn">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
                             <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z" />
                             <polyline points="17 21 17 13 7 13 7 21" />
                             <polyline points="7 3 7 8 15 8" />
@@ -538,74 +546,96 @@
                 </form>
             </section>
 
-            <!-- Users List Table Card -->
-            <section class="card">
-                <h2 class="card-title">
-                    <svg viewBox="0 0 24 24">
-                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
-                        <circle cx="9" cy="7" r="4" />
-                        <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
-                        <path d="M16 3.13a4 4 0 0 1 0 7.75" />
-                    </svg>
-                    Active Users Registry
-                </h2>
-                
-                <div class="table-container">
-                    @if(count($data) > 0)
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th scope="col" style="width: 80px;">ID</th>
-                                    <th scope="col">User Info</th>
-                                    <th scope="col" style="width: 180px; text-align: right;">Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach ($data as $i)
+            @if (auth()->user()->role === 'admin')
+
+                <!-- Users List Table Card -->
+                <section class="card">
+                    <h2 class="card-title">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+                            <circle cx="9" cy="7" r="4" />
+                            <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+                            <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+                        </svg>
+                        Active Users Registry
+                    </h2>
+
+                    <div class="table-container">
+                        @if (count($data) > 0)
+                            <table>
+                                <thead>
                                     <tr>
-                                        <td>
-                                            <span class="user-id">#{{ $i->id }}</span>
-                                        </td>
-                                        <td>
-                                            <div class="user-name">{{ $i->name }}</div>
-                                            <div class="user-email">{{ $i->email }}</div>
-                                        </td>
-                                        <td>
-                                            <div class="actions-cell" style="justify-content: flex-end;">
-                                                <a href="{{ route('update', ['id' => $i->id]) }}" class="btn-action btn-edit" id="btn-edit-{{ $i->id }}">
-                                                    <svg viewBox="0 0 24 24">
-                                                        <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
-                                                        <path d="M18.5 2.5a2.121 2.121 0 1 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
-                                                    </svg>
-                                                    Edit
-                                                </a>
-                                                <a href="{{ route('delete', ['id' => $i->id]) }}" class="btn-action btn-delete" id="btn-delete-{{ $i->id }}" onclick="return confirm('Are you sure you want to delete this user?');">
-                                                    <svg viewBox="0 0 24 24">
-                                                        <polyline points="3 6 5 6 21 6" />
-                                                        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
-                                                        <line x1="10" y1="11" x2="10" y2="17" />
-                                                        <line x1="14" y1="11" x2="14" y2="17" />
-                                                    </svg>
-                                                    Delete
-                                                </a>
-                                            </div>
-                                        </td>
+                                        <th scope="col" style="width: 80px;">ID</th>
+                                        <th scope="col">User Info</th>
+                                        <th scope="col" style="width: 180px; text-align: right;">Actions</th>
                                     </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
-                    @else
-                        <div class="empty-state">
-                            <svg viewBox="0 0 24 24">
-                                <circle cx="12" cy="12" r="10" />
-                                <line x1="12" y1="8" x2="12" y2="12" />
-                                <line x1="12" y1="16" x2="12.01" y2="16" />
-                            </svg>
-                            <p>No active users found in the system.</p>
-                        </div>
-                    @endif
+                                </thead>
+                                <tbody>
+                                    @foreach ($data as $i)
+                                        <tr>
+                                            <td>
+                                                <span class="user-id">#{{ $i->id }}</span>
+                                            </td>
+                                            <td>
+                                                <div class="user-name">{{ $i->name }}</div>
+                                                <div class="user-email">{{ $i->email }}</div>
+                                            </td>
+                                            <td>
+                                                <div class="actions-cell" style="justify-content: flex-end;">
+                                                    <a href="{{ route('update', ['id' => $i->id]) }}"
+                                                        class="btn-action btn-edit" id="btn-edit-{{ $i->id }}">
+                                                        <svg viewBox="0 0 24 24">
+                                                            <path
+                                                                d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+                                                            <path
+                                                                d="M18.5 2.5a2.121 2.121 0 1 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
+                                                        </svg>
+                                                        Edit
+                                                    </a>
+                                                    <a href="{{ route('delete', ['id' => $i->id]) }}"
+                                                        class="btn-action btn-delete"
+                                                        id="btn-delete-{{ $i->id }}"
+                                                        onclick="return confirm('Are you sure you want to delete this user?');">
+                                                        <svg viewBox="0 0 24 24">
+                                                            <polyline points="3 6 5 6 21 6" />
+                                                            <path
+                                                                d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+                                                            <line x1="10" y1="11" x2="10"
+                                                                y2="17" />
+                                                            <line x1="14" y1="11" x2="14"
+                                                                y2="17" />
+                                                        </svg>
+                                                        Delete
+                                                    </a>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        @else
+                            <div class="empty-state">
+                                <svg viewBox="0 0 24 24">
+                                    <circle cx="12" cy="12" r="10" />
+                                    <line x1="12" y1="8" x2="12" y2="12" />
+                                    <line x1="12" y1="16" x2="12.01" y2="16" />
+                                </svg>
+                                <p>No active users found in the system.</p>
+                            </div>
+                        @endif
+                    </div>
+                </section>
+            @else
+                <div class="empty-state">
+                    <svg viewBox="0 0 24 24">
+                        <circle cx="12" cy="12" r="10" />
+                        <line x1="12" y1="8" x2="12" y2="12" />
+                        <line x1="12" y1="16" x2="12.01" y2="16" />
+                    </svg>
+                    <p>You do not have permission to view the users list.</p>
                 </div>
-            </section>
+            @endif
+
         </main>
 
         <!-- Footer -->
