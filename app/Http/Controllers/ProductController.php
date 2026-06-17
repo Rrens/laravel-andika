@@ -67,6 +67,13 @@ class ProductController extends Controller
 
     public function adminDestroy($id)
     {
+        $product = Products::findOrFail($id);
+        if ($product->image) {
+            Storage::disk('public')->delete($product->image);
+        }
+        $product->delete();
 
+        Alert::success('Sukses', 'Produk berhasil dihapus.');
+        return redirect()->route('admin.products.index');
     }
 }
