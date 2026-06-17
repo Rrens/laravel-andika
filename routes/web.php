@@ -12,7 +12,6 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-
 Route::group([
     'prefix' => 'auth'
     ], function() {
@@ -34,6 +33,16 @@ Route::group([
     Route::get('delete/{id}', [UserController::class, 'delete'])->name('delete');
 
     Route::get('product', [ProductController::class, 'index'])->name('product');
+
+    Route::group([
+        'middleware' => ['role:admin'],
+        'prefix' => 'admin'
+    ], function() {
+        Route::get('product', [ProductController::class, 'adminIndex'])->name('admin.products.index');
+        Route::post('product', [ProductController::class, 'adminStore'])->name('admin.products.store');
+        Route::put('product/{id}', [ProductController::class, 'adminUpdate'])->name('admin.products.update');
+        Route::delete('product/{id}', [ProductController::class, 'adminDestroy'])->name('admin.products.destroy');
+    });
 
     Route::group([
         'prefix' => 'cart'

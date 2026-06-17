@@ -15,6 +15,7 @@
 </head>
 
 <body class="bg-light d-flex flex-column min-vh-100">
+    @include('sweetalert::alert')
 
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg bg-white shadow-sm sticky-top border-bottom">
@@ -54,8 +55,15 @@
     <!-- Product Grid -->
     <main class="container py-4 flex-grow-1">
         <div class="d-flex justify-content-between align-items-center mb-4">
-            <h4 class="fw-bold mb-0">Produk</h4>
-            <span class="text-muted small">{{ $products->count() }} produk</span>
+            <div class="d-flex align-items-center gap-3">
+                <h4 class="fw-bold mb-0">Produk</h4>
+                <span class="badge bg-secondary">{{ $products->count() }} produk</span>
+            </div>
+            @if(auth()->user() && auth()->user()->role === 'admin')
+                <a href="{{ route('admin.products.index') }}" class="btn btn-outline-primary">
+                    <i class="bi bi-shield-lock me-1"></i> Admin Panel
+                </a>
+            @endif
         </div>
 
         <div class="row g-3">
@@ -63,26 +71,33 @@
                 @foreach ($products as $product)
                     <div class="col-6 col-md-4 col-lg-3">
                         <div class="card h-100 shadow-sm border-0 position-relative">
-                            <div class="position-relative bg-light d-flex align-items-center justify-content-center" style="aspect-ratio: 1/1;">
+                            <div class="position-relative bg-light d-flex align-items-center justify-content-center" style="aspect-ratio: 1/1; overflow: hidden;">
                                 @if ($product->discount)
-                                    <span class="position-absolute top-0 start-0 badge bg-danger m-2">
+                                    <span class="position-absolute top-0 start-0 badge bg-danger m-2" style="z-index: 5;">
                                         -{{ $product->discount }}%
                                     </span>
                                 @endif
 
-                                {{-- @if ($product->is_sold <= 0)
-                                    <span class="position-absolute top-0 end-0 badge bg-secondary m-2">
+                                @if ($product->is_sold == 1)
+                                    <span class="position-absolute bottom-0 start-0 badge bg-secondary m-2" style="z-index: 5;">
                                         Sold
                                     </span>
-                                @endif --}}
+                                @endif
 
-                                <i class="bi bi-laptop text-secondary" style="font-size: 3rem;"></i>
+                                @if ($product->image)
+                                    <img src="{{ asset('storage/' . $product->image) }}" class="w-100 h-100 object-fit-cover" alt="{{ $product->name }}">
+                                @else
+                                    <i class="bi bi-laptop text-secondary" style="font-size: 3rem;"></i>
+                                @endif
                             </div>
 
                             <div class="card-body d-flex flex-column">
-                                <h6 class="card-title fw-semibold text-truncate-2" style="display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">
+                                <h6 class="card-title fw-semibold text-truncate-2 mb-1" style="display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">
                                     {{ $product->name }}
                                 </h6>
+                                <p class="text-muted small mb-2">
+                                    <i class="bi bi-shop me-1"></i> {{ $product->store ? $product->store->name : 'Tanpa Toko' }}
+                                </p>
 
                                 <div class="mt-auto d-flex justify-content-between align-items-end pt-2">
                                     <div>
@@ -138,9 +153,7 @@
         </div>
         <div class="offcanvas-body d-flex flex-column p-0">
             <div class="list-group list-group-flush flex-grow-1">
-                <!-- Item 1 -->
                 @foreach ($carts as $cart)
-
                     <div class="list-group-item d-flex gap-3 align-items-center px-3 py-3">
                         <div class="bg-light rounded-2 d-flex align-items-center justify-content-center flex-shrink-0" style="width: 56px; height: 56px;">
                             {{ $cart->id }}
