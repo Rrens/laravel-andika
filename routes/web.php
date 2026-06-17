@@ -62,6 +62,8 @@ Route::group([
     Route::get('/product', [ProductController::class, 'index'])
         ->name('product');
 
+});
+
     /*
     |--------------------------------------------------------------------------
     | CART
@@ -76,4 +78,13 @@ Route::group([
         Route::post('product', [ProductController::class, 'adminStore'])->name('admin.products.store');
         Route::put('product/{id}', [ProductController::class, 'adminUpdate'])->name('admin.products.update');
         Route::delete('product/{id}', [ProductController::class, 'adminDestroy'])->name('admin.products.destroy');
+    });
+    Route::group([
+        'prefix' => 'cart'
+    ], function(){
+        Route::post('', [CartController::class, 'store'])->name('cart-store');
+        Route::delete('delete/{id}', [CartController::class, 'delete'])->name('cart-delete');
+        Route::post('min/{id}', [CartController::class, 'min'])->name('cart-min');
+        Route::post('add/{id}', [CartController::class, 'add'])->name('cart-add');
+        Route::post('store', [CartController::class, 'store'])->name('cart-store');
     });
