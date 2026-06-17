@@ -12,14 +12,16 @@ class Products extends Model
     protected $table = 'products';
 
     protected $fillable = [
+        'store_id',
         'name',
         'price',
         'is_sold',
         'discount',
+        'image',
     ];
 
-    // public function store()
-    // {
-    //     return $this->belongsTo(stores::class, 'store_id', 'id');
-    // }
+    public function store()
+    {
+        return $this->belongsTo(stores::class, 'store_id', 'id');
+    }
 }

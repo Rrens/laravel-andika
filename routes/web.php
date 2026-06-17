@@ -68,22 +68,12 @@ Route::group([
     |--------------------------------------------------------------------------
     */
 
-    Route::prefix('cart')->group(function () {
-
-        // tambah produk ke keranjang
-        Route::post('/', [CartController::class, 'store'])
-            ->name('cart-store');
-
-        // quantity +
-        Route::post('/add/{id}', [CartController::class, 'add'])
-            ->name('cart-add');
-
-        // quantity -
-        Route::post('/min/{id}', [CartController::class, 'min'])
-            ->name('cart-min');
-
-        // hapus item
-        Route::delete('/delete/{id}', [CartController::class, 'delete'])
-            ->name('cart-delete');
+    Route::group([
+        'middleware' => ['role:admin'],
+        'prefix' => 'admin'
+    ], function() {
+        Route::get('product', [ProductController::class, 'adminIndex'])->name('admin.products.index');
+        Route::post('product', [ProductController::class, 'adminStore'])->name('admin.products.store');
+        Route::put('product/{id}', [ProductController::class, 'adminUpdate'])->name('admin.products.update');
+        Route::delete('product/{id}', [ProductController::class, 'adminDestroy'])->name('admin.products.destroy');
     });
-});

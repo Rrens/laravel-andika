@@ -4,18 +4,19 @@ namespace App\Http\Controllers;
 
 use App\Models\Cart;
 use App\Models\Products;
+use App\Models\stores;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Storage;
+use RealRashid\SweetAlert\Facades\Alert;
 
 class ProductController extends Controller
 {
     public function index()
-{
-    $products = Products::all();
+    {
+        $products = Products::all();
+        $carts = Cart::all();
 
-    $carts = Cart::join('products', 'carts.product_id', '=', 'products.id')
-        ->select('carts.*', 'products.name', 'products.price')
-        ->where('carts.user_id', auth()->id())
-        ->get();
-
-    return view('products', compact('products', 'carts'));
-}
+        return view('products', compact('products', 'carts'));
+    }
 }

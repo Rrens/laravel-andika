@@ -21,6 +21,7 @@ class ProductsFactory extends Factory
         $productNames = ['Laptop', 'Smartphone', 'Headphones', 'Camera', 'Smartwatch'];
 
         return [
+            'store_id' => \App\Models\stores::inRandomOrder()->first()?->id ?? \App\Models\stores::factory(),
             'name' => Arr::random($productNames),
             'price' => 10000,
             'is_sold' => 0,
