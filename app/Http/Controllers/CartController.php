@@ -5,10 +5,12 @@ namespace App\Http\Controllers;
 use App\Models\Cart;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
-use RealRashid\SweetAlert\Facades\Alert;
 
 class CartController extends Controller
 {
+    /**
+     * Tambah produk ke keranjang
+     */
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -16,24 +18,64 @@ class CartController extends Controller
         ]);
 
         if ($validator->fails()) {
-            Alert::error('Error', 'Failed to add product to cart');
-
-            return redirect()->back()->withErrors($validator)->withInput();
+            return back()->withErrors($validator);
         }
 
-        $cart_check = Cart::where('product_id', $request->product_id)->first();
+        $cart = Cart::where('user_id', auth()->id())
+            ->where('product_id', $request->product_id)
+            ->first();
 
-        if ($cart_check) {
-            $cart_check->quantity += 1;
-            $cart_check->save();
+        if ($cart) {
+            $cart->quantity += 1;
+            $cart->save();
         } else {
             Cart::create([
-                'user_id' => auth()->id(),
+                'user_id'    => auth()->id(),
                 'product_id' => $request->product_id,
-                'quantity' => 1,
+                'quantity'   => 1,
             ]);
         }
 
-        return redirect()->back()->with('success', 'Product added to cart successfully');
+        return back();
+    }
+
+    /**
+     * Quantity +
+     */
+    public function add($id)
+    {
+        $cart = Cart::findOrFail($id);
+
+        $cart->quantity += 1;
+        $cart->save();
+
+        return back();
+    }
+
+    /**
+     * Quantity -
+     */
+    public function min($id)
+    {
+        $cart = Cart::findOrFail($id);
+
+        if ($cart->quantity > 1) {
+            $cart->quantity -= 1;
+            $cart->save();
+        }
+
+        return back();
+    }
+
+    /**
+     * Hapus item dari keranjang
+     */
+    public function delete($id)
+    {
+        $cart = Cart::findOrFail($id);
+
+        $cart->delete();
+
+        return back();
     }
 }

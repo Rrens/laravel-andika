@@ -58,6 +58,8 @@
             <span class="text-muted small">{{ $products->count() }} produk</span>
         </div>
 
+        
+
         <div class="row g-3">
             @if ($products->count() > 0)
                 @foreach ($products as $product)
@@ -141,31 +143,81 @@
                 <!-- Item 1 -->
                 @foreach ($carts as $cart)
 
-                    <div class="list-group-item d-flex gap-3 align-items-center px-3 py-3">
-                        <div class="bg-light rounded-2 d-flex align-items-center justify-content-center flex-shrink-0" style="width: 56px; height: 56px;">
-                            {{ $cart->id }}
-                        </div>
-                        <div class="flex-grow-1 min-w-0">
-                            <h6 class="mb-0 fw-semibold text-truncate">{{ $cart->name }}</h6>
-                            <small class="text-muted">Rp </small>
-                            <div class="d-flex align-items-center gap-1 mt-1">
-                                <button class="btn btn-outline-secondary btn-sm rounded-2 d-flex" style="width: 28px; height: 28px; padding: 0;">-</button>
-                                <span class="fw-semibold mx-1" style="min-width: 20px; text-align: center;">1</span>
-                                <button class="btn btn-outline-secondary btn-sm rounded-2 d-flex" style="width: 28px; height: 28px; padding: 0;">+</button>
-                            </div>
-                        </div>
-                        <button class="btn btn-sm text-danger flex-shrink-0">
-                            <i class="bi bi-trash3"></i>
-                        </button>
-                    </div>
-                @endforeach
+<div class="list-group-item d-flex gap-3 align-items-center px-3 py-3">
+
+    <div class="bg-light rounded-2 d-flex align-items-center justify-content-center flex-shrink-0"
+        style="width: 56px; height: 56px;">
+        {{ $cart->product_id }}
+    </div>
+
+    <div class="flex-grow-1 min-w-0">
+
+        <h6 class="mb-0 fw-semibold text-truncate">
+            {{ $cart->name }}
+        </h6>
+
+        <small class="text-muted">
+            Rp {{ number_format($cart->price, 0, ',', '.') }}
+        </small>
+
+        <div class="d-flex align-items-center gap-1 mt-2">
+
+            <!-- Minus -->
+            <form action="{{ route('cart-min', $cart->id) }}" method="POST">
+                @csrf
+                <button type="submit"
+                    class="btn btn-outline-secondary btn-sm"
+                    style="width:28px;height:28px;padding:0;">
+                    -
+                </button>
+            </form>
+
+            <!-- Quantity -->
+            <span class="fw-semibold mx-1"
+                style="min-width:20px;text-align:center;">
+                {{ $cart->quantity }}
+            </span>
+
+            <!-- Plus -->
+            <form action="{{ route('cart-add', $cart->id) }}" method="POST">
+                @csrf
+                <button type="submit"
+                    class="btn btn-outline-secondary btn-sm"
+                    style="width:28px;height:28px;padding:0;">
+                    +
+                </button>
+            </form>
+
+        </div>
+
+    </div>
+
+    <!-- Hapus -->
+    <form action="{{ route('cart-delete', $cart->id) }}"
+          method="POST">
+        @csrf
+        @method('DELETE')
+
+        <button type="submit"
+            class="btn btn-sm text-danger flex-shrink-0">
+            <i class="bi bi-trash3"></i>
+        </button>
+    </form>
+
+</div>
+
+@endforeach
             </div>
 
             <!-- Cart Footer -->
             <div class="border-top p-3">
                 <div class="d-flex justify-content-between fw-bold mb-3">
                     <span>Total</span>
-                    <span class="text-warning">Rp 37.998.000</span>
+                    <span class="text-warning">
+                         Rp {{ number_format($carts->sum(function($item){
+                          return $item->price * $item->quantity;
+                           }), 0, ',', '.') }}
+                           </span>
                 </div>
                 <button class="btn btn-primary w-100">
                     <i class="bi bi-credit-card me-2"></i>Checkout
