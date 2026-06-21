@@ -11,6 +11,9 @@ use RealRashid\SweetAlert\Facades\Alert;
 
 class CartController extends Controller
 {
+    /**
+     * Tambah produk ke keranjang
+     */
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -18,14 +21,12 @@ class CartController extends Controller
         ]);
 
         if ($validator->fails()) {
-            Alert::error('Error', 'Failed to add product to cart');
-
-            return redirect()->back()->withErrors($validator)->withInput();
+            return back()->withErrors($validator);
         }
 
         $cart_check = Cart::where('user_id', auth()->id())
-                          ->where('product_id', $request->product_id)
-                          ->first();
+            ->where('product_id', $request->product_id)
+            ->first();
 
         if ($cart_check) {
             $cart_check->quantity += 1;
@@ -38,21 +39,32 @@ class CartController extends Controller
             ]);
         }
 
-        return redirect()->back()->with('success', 'Product added to cart successfully');
+        Alert::success('Sukses', 'Produk berhasil ditambahkan ke keranjang.');
+        return back();
     }
 
+    /**
+     * Hapus produk dari keranjang
+     */
     public function destroy($id)
     {
-        $cart = Cart::where('user_id', auth()->id())->findOrFail($id);
+        $cart = Cart::where('user_id', auth()->id())
+            ->findOrFail($id);
+
         $cart->delete();
 
         Alert::success('Sukses', 'Produk berhasil dihapus dari keranjang.');
         return redirect()->back();
     }
 
+    /**
+     * Tampilkan halaman invoice
+     */
     public function invoice()
     {
-        $carts = Cart::with('product')->where('user_id', auth()->id())->get();
+        $carts = Cart::with('product')
+            ->where('user_id', auth()->id())
+            ->get();
 
         if ($carts->isEmpty()) {
             Alert::warning('Peringatan', 'Keranjang belanja Anda kosong.');
@@ -62,5 +74,51 @@ class CartController extends Controller
         return view('invoice', compact('carts'));
     }
 
+    /**
+     * Checkout dan kirim invoice ke email
+     */
+    public function checkout(Request $request)
+    {
+        $user = auth()->user();
 
+        $carts = Cart::with('product')
+            ->where('user_id', $user->id)
+            ->get();
+
+        if ($carts->isEmpty()) {
+            Alert::warning('Peringatan', 'Keranjang Anda kosong.');
+            return redirect()->route('product');
+        }
+
+        $total = 0;
+
+        foreach ($carts as $cart) {
+
+            if (!$cart->product) {
+                continue;
+            }
+
+            $itemPrice = $cart->product->price;
+
+            if ($cart->product->discount) {
+                $itemPrice = $cart->product->price * (1 - ($cart->product->discount / 100));
+            }
+
+            $subtotal = $itemPrice * $cart->quantity;
+            $total += $subtotal;
+        }
+
+        Mail::to($user->email)
+            ->send(new InvoiceMail($carts, $user, $total));
+
+        // Hapus keranjang setelah checkout
+        Cart::where('user_id', $user->id)->delete();
+
+        Alert::success(
+            'Pembayaran Berhasil',
+            'Invoice berhasil dikirim ke email Anda.'
+        );
+
+        return redirect()->route('product');
+    }
 }

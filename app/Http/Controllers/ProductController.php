@@ -18,7 +18,7 @@ class ProductController extends Controller
         $carts = Cart::with('product')->where('user_id', auth()->id())->get();
         $stores = stores::all();
 
-        return view('products', compact('products', 'carts', 'stores'));
+        return view('products', compact('products', 'carts'));
     }
 
     public function adminIndex()

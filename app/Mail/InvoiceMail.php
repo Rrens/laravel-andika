@@ -24,35 +24,11 @@ class InvoiceMail extends Mailable
         $this->carts = $carts;
         $this->user = $user;
         $this->total = $total;
+        // dd($user);
     }
-
-    /**
-     * Get the message envelope.
-     */
-    public function envelope(): Envelope
+    
+    public function build()
     {
-        return new Envelope(
-            subject: 'Invoice Pembelian MarketHub - #' . time(),
-        );
-    }
-
-    /**
-     * Get the message content definition.
-     */
-    public function content(): Content
-    {
-        return new Content(
-            view: 'emails.invoice',
-        );
-    }
-
-    /**
-     * Get the attachments for the message.
-     *
-     * @return array<int, \Illuminate\Mail\Mailables\Attachment>
-     */
-    public function attachments(): array
-    {
-        return [];
+        return $this->subject('contoh subject')->view('emails.invoice');
     }
 }
