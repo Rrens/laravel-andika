@@ -152,37 +152,62 @@
             <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
         </div>
         <div class="offcanvas-body d-flex flex-column p-0">
-            <div class="list-group list-group-flush flex-grow-1">
-                @foreach ($carts as $cart)
-                    <div class="list-group-item d-flex gap-3 align-items-center px-3 py-3">
-                        <div class="bg-light rounded-2 d-flex align-items-center justify-content-center flex-shrink-0" style="width: 56px; height: 56px;">
-                            {{ $cart->id }}
-                        </div>
-                        <div class="flex-grow-1 min-w-0">
-                            <h6 class="mb-0 fw-semibold text-truncate">{{ $cart->name }}</h6>
-                            <small class="text-muted">Rp </small>
-                            <div class="d-flex align-items-center gap-1 mt-1">
-                                <button class="btn btn-outline-secondary btn-sm rounded-2 d-flex" style="width: 28px; height: 28px; padding: 0;">-</button>
-                                <span class="fw-semibold mx-1" style="min-width: 20px; text-align: center;">1</span>
-                                <button class="btn btn-outline-secondary btn-sm rounded-2 d-flex" style="width: 28px; height: 28px; padding: 0;">+</button>
+            <div class="list-group list-group-flush flex-grow-1" style="overflow-y: auto;">
+                @php $cartTotal = 0; @endphp
+                @forelse ($carts as $cart)
+                    @if($cart->product)
+                        @php
+                            $itemPrice = $cart->product->price;
+                            if ($cart->product->discount) {
+                                $itemPrice = $cart->product->price * (1 - $cart->product->discount / 100);
+                            }
+                            $itemTotal = $itemPrice * $cart->quantity;
+                            $cartTotal += $itemTotal;
+                        @endphp
+                        <div class="list-group-item d-flex gap-3 align-items-center px-3 py-3">
+                            <div class="bg-light rounded-2 d-flex align-items-center justify-content-center flex-shrink-0" style="width: 56px; height: 56px; overflow: hidden;">
+                                @if ($cart->product->image)
+                                    <img src="{{ asset('storage/' . $cart->product->image) }}" class="w-100 h-100 object-fit-cover" alt="product">
+                                @else
+                                    <i class="bi bi-image text-secondary" style="font-size: 1.2rem;"></i>
+                                @endif
                             </div>
+                            <div class="flex-grow-1 min-w-0">
+                                <h6 class="mb-0 fw-semibold text-truncate">{{ $cart->product->name }}</h6>
+                                <small class="text-muted">Rp {{ number_format($itemPrice, 0, ',', '.') }} x {{ $cart->quantity }}</small>
+                            </div>
+                            <form action="{{ route('cart.destroy', $cart->id) }}" method="POST" class="m-0">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="btn btn-sm text-danger flex-shrink-0 border-0 bg-transparent">
+                                    <i class="bi bi-trash3"></i>
+                                </button>
+                            </form>
                         </div>
-                        <button class="btn btn-sm text-danger flex-shrink-0">
-                            <i class="bi bi-trash3"></i>
-                        </button>
+                    @endif
+                @empty
+                    <div class="text-center py-5 text-muted">
+                        <i class="bi bi-cart-x fs-1 d-block mb-2"></i>
+                        Keranjang Anda kosong.
                     </div>
-                @endforeach
+                @endforelse
             </div>
 
             <!-- Cart Footer -->
-            <div class="border-top p-3">
+            <div class="border-top p-3 bg-light">
                 <div class="d-flex justify-content-between fw-bold mb-3">
                     <span>Total</span>
-                    <span class="text-warning">Rp 37.998.000</span>
+                    <span class="text-warning">Rp {{ number_format($cartTotal, 0, ',', '.') }}</span>
                 </div>
-                <button class="btn btn-primary w-100">
-                    <i class="bi bi-credit-card me-2"></i>Checkout
-                </button>
+                @if ($carts->count() > 0)
+                    <a href="{{ route('invoice.index') }}" class="btn btn-primary w-100">
+                        <i class="bi bi-credit-card me-2"></i>Checkout
+                    </a>
+                @else
+                    <button class="btn btn-primary w-100" disabled>
+                        <i class="bi bi-credit-card me-2"></i>Checkout
+                    </button>
+                @endif
             </div>
         </div>
     </div>

@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\SendEmailController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -48,6 +49,12 @@ Route::group([
         'prefix' => 'cart'
     ], function(){
         Route::post('', [CartController::class, 'store'])->name('cart-store');
+        Route::delete('{id}', [CartController::class, 'destroy'])->name('cart.destroy');
     });
+
+    Route::get('invoice', [CartController::class, 'invoice'])->name('invoice.index');
+    Route::post('checkout', [CartController::class, 'checkout'])->name('invoice.checkout');
+
+    Route::get('send-email', [SendEmailController::class, 'send_email']);
 });
 
