@@ -62,28 +62,5 @@ class CartController extends Controller
         return view('invoice', compact('carts'));
     }
 
-    public function checkout(Request $request)
-    {
-        $user = auth()->user();
-        $carts = Cart::with('product')->where('user_id', $user->id)->get();
 
-        if ($carts->isEmpty()) {
-            Alert::error('Error', 'Keranjang belanja Anda kosong.');
-            return redirect()->route('product');
-        }
-
-        $total = $request->input('total_amount', 0);
-
-        try {
-            Mail::to($user->email)->send(new InvoiceMail($carts, $user, $total));
-
-            Cart::where('user_id', $user->id)->delete();
-
-            Alert::success('Checkout Berhasil', 'Pembayaran diterima dan invoice telah dikirimkan ke email Anda.');
-            return redirect()->route('product');
-        } catch (\Exception $e) {
-            Alert::error('Kesalahan', 'Gagal mengirim email invoice: ' . $e->getMessage());
-            return redirect()->back();
-        }
-    }
 }

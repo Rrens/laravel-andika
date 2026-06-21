@@ -53,7 +53,7 @@ Route::group([
     });
 
     Route::get('invoice', [CartController::class, 'invoice'])->name('invoice.index');
-    Route::post('checkout', [CartController::class, 'checkout'])->name('invoice.checkout');
+    // Route::post('checkout', [CartController::class, 'checkout'])->name('invoice.checkout');
 
     Route::get('send-email', [SendEmailController::class, 'send_email']);
 });
