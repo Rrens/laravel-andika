@@ -2,7 +2,7 @@
 
 namespace Database\Seeders;
 
-use App\Models\stores;
+use App\Models\Stores;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 
@@ -22,9 +22,9 @@ class StoresSeeder extends Seeder
                 ]);
             }
 
-            stores::factory()->count(5)->create(['user_id' => null]);
+            Stores::factory()->count(5)->create(['user_id' => null]);
         } else {
-            stores::factory()->count(10)->create(['user_id' => null]);
+            Stores::factory()->count(10)->create(['user_id' => null]);
         }
     }
 }

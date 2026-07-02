@@ -25,6 +25,7 @@ class RoleMiddleware
             abort(403, 'Forbidden');
         }
 
+
         return $next($request);
     }
 }

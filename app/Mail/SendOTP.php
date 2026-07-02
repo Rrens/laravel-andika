@@ -3,32 +3,30 @@
 namespace App\Mail;
 
 use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
-class InvoiceMail extends Mailable
+class SendOTP extends Mailable
 {
     use Queueable, SerializesModels;
 
-    public $carts;
-    public $user;
-    public $total;
+    public $data;
 
     /**
      * Create a new message instance.
      */
-    public function __construct($carts, $user, $total)
+    public function __construct($data)
     {
-        $this->carts = $carts;
-        $this->user = $user;
-        $this->total = $total;
-        // dd($user);
+        $this->data = $data;
     }
-    
+
     public function build()
     {
-        return $this->subject('contoh subject')->view('emails.invoice');
+        return $this->subject($this->data['subject'])
+            ->view('emails.send_otp');
     }
+    
 }

@@ -66,6 +66,8 @@
             @endif
         </div>
 
+        
+
         <div class="row g-3">
             @if ($products->count() > 0)
                 @foreach ($products as $product)
