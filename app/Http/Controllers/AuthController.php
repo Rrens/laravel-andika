@@ -2,9 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\SendOTP;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Validator;
+use RealRashid\SweetAlert\Facades\Alert;
 
 class AuthController extends Controller
 {
@@ -46,8 +50,13 @@ class AuthController extends Controller
             'email' => $request->input('email'),
             'password' => $request->input('password'),
         ]);
-
-        return redirect()->route('login')->with('success', 'Account created successfully. Please sign in.');
+        $data_otp= [
+            'subject'=> 'verify otp',
+            'otp'=> 123456
+        ];
+        $send_email_otp= Mail::to($request->input('email'))->send(new SendOTP($data_otp));
+        
+        return redirect()->route('login')->with('success', 'Account created successfully. Please check email for otp.');
     }
 
     public function logout(Request $request)
@@ -59,4 +68,30 @@ class AuthController extends Controller
 
         return redirect('/');
     }
+
+    public function confirm_otp()
+    {
+        return view('confirm_otp');
+
+    }
+
+    public function verify_otp(Request $request)
+    {
+        dd($request->all());
+        $validator = Validator::make($requesty,[
+            'otp'=>['required','array','size:6'],  
+             'otp.*'=>['required','numerik','digits:1']
+        ]);
+        if($validator->fails()){
+            dd($validator->messages()->all());
+        }
+        if($request->otp[0]==1 && $request->otp[1]==2 && $request->otp[2]==3 && $request->otp[3]==4 && $request->otp[4]==5 && $request->otp[5]==6){
+            
+        }
+    }
+
+    
+
+
+    
 }
