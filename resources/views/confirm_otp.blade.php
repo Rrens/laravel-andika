@@ -96,7 +96,7 @@ button:hover{
     <div class="otp-card">
         <h2>Verification Code</h2>
         <p>Enter the 6-digit code sent to your email.</p>
-        <form method="post"action="{{route('verify.otp')}}">
+        <form method="post" action="{{ route('verify.otp') }}">
             @csrf
         <div class="otp-inputs">
             <input name="otp[]" type="text" maxlength="1">
@@ -106,6 +106,8 @@ button:hover{
             <input name="otp[]" type="text" maxlength="1">
             <input name="otp[]" type="text" maxlength="1">
         </div>
+
+        <input type="email" name="email" placeholder="Email address" style="width:100%;padding:14px;border:2px solid #dcdcdc;border-radius:12px;font-size:16px;outline:none;margin-bottom:20px;transition:.3s;" onfocus="this.style.borderColor='#4f46e5';this.style.boxShadow='0 0 0 4px rgba(79,70,229,.15)'" onblur="this.style.borderColor='#dcdcdc';this.style.boxShadow='none'" required>
 
         <button type="submit">Verify</button>
         </form>
